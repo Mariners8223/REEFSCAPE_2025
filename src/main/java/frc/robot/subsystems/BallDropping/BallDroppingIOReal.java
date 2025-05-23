@@ -38,6 +38,9 @@ public class BallDroppingIOReal implements BallDroppingIO{
         motor.setMaxMinOutput(3, 3);
 
         motor.setMotorIdleMode(true);
+
+        motor.enableSoftLimits(BallDroppingConstants.AngleMotor.ANGLE_TO_RESET, BallDroppingConstants.AngleMotor.ANGLE_TO_REACH_TOP + 0.1); 
+        // TODO: CHECK ACTUAL SOFT LIMITS
         
         return motor;
     }
