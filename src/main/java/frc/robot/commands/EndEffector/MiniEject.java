@@ -46,9 +46,9 @@ public class MiniEject extends Command {
       rightValue = motorPower.rightMotorPower;
       leftValue = motorPower.leftMotorPower;
     }
-    // else{
-    //   RobotContainer.endEffector.setLoadedValue(true);
-    // }
+    else{
+      RobotContainer.endEffector.setLoadedValue(true);
+    }
 
     endEffector.setRightMotorPower(rightValue);
     endEffector.setLeftMotorPower(leftValue);

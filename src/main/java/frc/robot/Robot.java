@@ -167,11 +167,11 @@ public class Robot extends LoggedRobot
     @Override
     public void robotPeriodic()
     {
-        // CommandScheduler.getInstance().run();
-        // SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
-        // SmartDashboard.putNumber("Robot Velocity", RobotContainer.driveBase.getVelocity());
-        // SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
-        // SmartDashboard.putNumber("PDH Voltage", ConduitApi.getInstance().getPDPVoltage());
+        CommandScheduler.getInstance().run();
+        SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
+        SmartDashboard.putNumber("Robot Velocity", RobotContainer.driveBase.getVelocity());
+        SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
+        SmartDashboard.putNumber("PDH Voltage", ConduitApi.getInstance().getPDPVoltage());
         // Logger.recordOutput("LED power draw", pdh.getCurrent(23) * pdh.getVoltage());
     }
     
@@ -227,7 +227,7 @@ public class Robot extends LoggedRobot
         // Pose2d resetPose = new Pose2d(RobotContainer.driveBase.getPose().getTranslation(), isRedAlliance ? new Rotation2d() : new Rotation2d(Math.PI));
         // RobotContainer.driveBase.reset(resetPose);
 
-        // autonomousCommand = RobotContainer.getAutoCommand();
+        autonomousCommand = RobotContainer.getAutoCommand();
 
         Elastic.selectTab(0);
         Logger.recordOutput("Elastic Tab", "auto");
