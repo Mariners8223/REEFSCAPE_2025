@@ -70,7 +70,7 @@ import frc.robot.subsystems.DriveTrain.DriveBase;
 
 
 public class RobotContainer {
-    public static DriveBase driveBase;
+    // public static DriveBase driveBase;
     public static Elevator elevator;
     public static EndEffector endEffector;
     public static BallDropping ballDropping;
@@ -91,14 +91,14 @@ public class RobotContainer {
         driveController = new CommandXboxController(0);
         operatorController = new CommandGenericHID(1);
 
-        driveBase = new DriveBase();
+        // driveBase = new DriveBase();
         elevator = new Elevator();
         endEffector = new EndEffector();
         ballDropping = new BallDropping();
         climb = new Climb();
         led = new LED();
-        robotAuto = new RobotAuto();
-        vision = new Vision(driveBase::addVisionMeasurement, driveBase::getPose, HomeToReef::isRunning);
+        // robotAuto = new RobotAuto();
+        // vision = new Vision(driveBase::addVisionMeasurement, driveBase::getPose, HomeToReef::isRunning);
 
         endEffector.setDefaultCommand(new Intake(endEffector));
 
@@ -116,9 +116,10 @@ public class RobotContainer {
         configFeederChooser();
         configLEDs();
         
-        configureDriveBindings();
-        configureOperatorBinding();
+        // configureDriveBindings();
+        // configureOperatorBinding();
 
+        //#region Configuration
         //  configureCamera();
         if (RobotBase.isReal()) {
             CameraServer.startAutomaticCapture();
@@ -160,7 +161,7 @@ public class RobotContainer {
         new Trigger(() -> ConduitApi.getInstance().getPDPVoltage() > 7)
                 .whileTrue(new WaitCommand(10).andThen(new InstantCommand(() -> led.setLEDState(true))).ignoringDisable(true))
                 .onFalse(new InstantCommand(() -> led.setLEDState(false)).ignoringDisable(true));
-
+        //#endregion
     }
 
     public static void configFeederChooser(){
@@ -280,10 +281,12 @@ public class RobotContainer {
         onlyRobotToReef.and(() -> robotAuto.getSelectedReef() != null)
                 .whileTrue(new RobotToReef(driveBase, robotAuto::getSelectedReef, led));
 
-        moveElevator.whileTrue(
-                        new MoveToLevelActive(elevator, robotAuto::getSelectedLevel)
-                .onlyIf(() -> robotAuto.getSelectedLevel() != null && endEffector.isGpLoaded() && robotBelowCertainSpeed.getAsBoolean())
-        );
+        // moveElevator.whileTrue(
+        //                 new MoveToLevelActive(elevator, robotAuto::getSelectedLevel)
+        //         .onlyIf(() -> robotAuto.getSelectedLevel() != null && endEffector.isGpLoaded() && robotBelowCertainSpeed.getAsBoolean())
+        // );
+        moveElevator.whileTrue(new MoveToLevel(elevator, ElevatorLevel.L3));
+        moveElevator.onFalse(new MoveToLevel(elevator, ElevatorLevel.L1));
 
         // semiAuto.and(isCycleReady).whileTrue(semiAutoCommand);
         // semiAuto.onFalse(new MoveToLevel(elevator, ElevatorLevel.Bottom));

@@ -3,18 +3,19 @@ package frc.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.BallDropping.BallDropping;
 import frc.robot.subsystems.EndEffector.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorConstants;
+import frc.robot.subsystems.EndEffector.EndEffectorIOReal;
 
 public class Blackbox {
-    private static EndEffector endEffector = new EndEffector();
-    private static BallDropping dropper = new BallDropping();
-    private static CommandPS5Controller controller = new CommandPS5Controller(0);
-    private static DigitalInput beamBreak = new DigitalInput(EndEffectorConstants.BEAM_BREAK_PORT);
+    private static EndEffector endEffector = RobotContainer.endEffector;
+    private static BallDropping dropper = RobotContainer.ballDropping;
+    private static CommandXboxController controller = RobotContainer.driveController;
+    private static DigitalInput beamBreak = ((EndEffectorIOReal)RobotContainer.endEffector.io).beamBreak;
 
     /**
      * Sets the duty cycle (percent of full power) of the right endeffector motor
@@ -69,19 +70,19 @@ public class Blackbox {
     /**
      * @return BooleanTrigger of controller's circle button
      */
-    public static Trigger controllerCircle(){ return controller.circle(); }
+    public static Trigger controllerCircle(){ return controller.b(); }
     /**
      * @return BooleanTrigger of controller's square button
      */
-    public static Trigger controllerSquare(){ return controller.square(); }
+    public static Trigger controllerSquare(){ return controller.x(); }
     /**
      * @return BooleanTrigger of controller's cross button
      */
-    public static Trigger controllerCross(){ return controller.cross(); }
+    public static Trigger controllerCross(){ return controller.a(); }
     /**
      * @return BooleanTrigger of controller's triangle button
      */
-    public static Trigger controllerTriangle(){ return controller.triangle(); }
+    public static Trigger controllerTriangle(){ return controller.y(); }
 
     // public static Supplier<Double> controllerLeftXAxis() { return controller::getLeftX; }
     // public static Supplier<Double> controllerLeftYAxis() { return controller::getLeftY; }

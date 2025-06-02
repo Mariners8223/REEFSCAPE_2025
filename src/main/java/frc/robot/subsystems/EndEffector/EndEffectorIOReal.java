@@ -16,7 +16,7 @@ public class EndEffectorIOReal implements EndEffectorIO {
     private final VictorSPX RightMotor;
     private final VictorSPX LeftMotor;
     private final MarinersTalonFX FunnelMotor;
-    private final DigitalInput beamBreak;
+    public final DigitalInput beamBreak;
 
 
     public EndEffectorIOReal() {
