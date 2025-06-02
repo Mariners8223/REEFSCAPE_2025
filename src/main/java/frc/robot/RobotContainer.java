@@ -124,6 +124,12 @@ public class RobotContainer {
         //     )
         // );
 
+        controllerSquare.onTrue(ballDropperReachAngle(100));
+        controllerSquare.onFalse(ballDropperReachAngle(40));
+
+        controllerTriangle.onTrue(ballDropperDutyCycle(30));
+        controllerTriangle.onFalse(ballDropperDutyCycle(0));
+
 
 
         // configNamedCommands();
