@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -8,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.BallDropping.BallDropping;
 import frc.robot.subsystems.EndEffector.EndEffector;
-import frc.robot.subsystems.EndEffector.EndEffectorConstants;
 import frc.robot.subsystems.EndEffector.EndEffectorIOReal;
 
 public class Blackbox {
@@ -50,8 +50,9 @@ public class Blackbox {
      * @param angle Angle (in degrees) to go to
      */
     public static Command ballDropperReachAngle(double angle){
-        return (new InstantCommand(() -> dropper.reachAngle(Units.degreesToRotations(angle))))
-        .until(() -> (dropper.getAngle() >= Units.degreesToRotations(angle)));
+        double clampedAngle = MathUtil.clamp(angle, 10, 125);
+        return (new InstantCommand(() -> dropper.reachAngle(Units.degreesToRotations(clampedAngle))))
+        .until(() -> (dropper.getAngle() >= Units.degreesToRotations(clampedAngle)));
     }
     /**
      * Sets the duty cycle (percent of full power) of the Balldropper motor
@@ -68,21 +69,21 @@ public class Blackbox {
     }
 
     /**
-     * @return BooleanTrigger of controller's circle button
+     * BooleanTrigger of controller's circle button
      */
-    public static Trigger controllerCircle(){ return controller.b(); }
+    public static Trigger controllerCircle = controller.b();
     /**
-     * @return BooleanTrigger of controller's square button
+     * BooleanTrigger of controller's square button
      */
-    public static Trigger controllerSquare(){ return controller.x(); }
+    public static Trigger controllerSquare = controller.x();
     /**
-     * @return BooleanTrigger of controller's cross button
+     * BooleanTrigger of controller's cross button
      */
-    public static Trigger controllerCross(){ return controller.a(); }
+    public static Trigger controllerCross = controller.a();
     /**
-     * @return BooleanTrigger of controller's triangle button
+     * BooleanTrigger of controller's triangle button
      */
-    public static Trigger controllerTriangle(){ return controller.y(); }
+    public static Trigger controllerTriangle = controller.y();
 
     // public static Supplier<Double> controllerLeftXAxis() { return controller::getLeftX; }
     // public static Supplier<Double> controllerLeftYAxis() { return controller::getLeftY; }
@@ -92,5 +93,5 @@ public class Blackbox {
     /**
      * @return BooleanTrigger of the beambreak's state
      */
-    public static Trigger beamBreakTrigger() { return new Trigger(() -> beamBreak.get()); }
+    public static Trigger beamBreakTrigger = new Trigger(() -> beamBreak.get());
 }

@@ -169,7 +169,7 @@ public class Robot extends LoggedRobot
     {
         CommandScheduler.getInstance().run();
         SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
-        SmartDashboard.putNumber("Robot Velocity", RobotContainer.driveBase.getVelocity());
+        // SmartDashboard.putNumber("Robot Velocity", RobotContainer.driveBase.getVelocity());
         SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
         SmartDashboard.putNumber("PDH Voltage", ConduitApi.getInstance().getPDPVoltage());
         // Logger.recordOutput("LED power draw", pdh.getCurrent(23) * pdh.getVoltage());
@@ -190,16 +190,16 @@ public class Robot extends LoggedRobot
                 driverStationCheckTimer = 0;
 
                 isRedAlliance = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
-                RobotContainer.led.setDefaultPattern(isRedAlliance);
-                RobotContainer.led.putDefaultPattern();
+                // RobotContainer.led.setDefaultPattern(isRedAlliance);
+                // RobotContainer.led.putDefaultPattern();
             }
         }
 
         
-        if (SmartDashboard.getBoolean("LED on", true) != ledState) {
-            ledState = !ledState;
-            RobotContainer.led.setLEDState(ledState);
-        }
+        // if (SmartDashboard.getBoolean("LED on", true) != ledState) {
+            // ledState = !ledState;
+            // RobotContainer.led.setLEDState(ledState);
+        // }
     }
     
     @SuppressWarnings("RedundantMethodOverride")
@@ -218,7 +218,7 @@ public class Robot extends LoggedRobot
         if(Constants.ROBOT_TYPE == Constants.RobotType.COMPETITION){
             checkFlip();
             resetEncoders();
-            RobotContainer.led.setDefaultPattern(isRedAlliance);
+            // RobotContainer.led.setDefaultPattern(isRedAlliance);
             if(RobotContainer.endEffector != null) RobotContainer.endEffector.setLoadedValue(true);
         }
 
@@ -241,10 +241,10 @@ public class Robot extends LoggedRobot
         RobotContainer.robotAuto.setFeederSide(RobotContainer.feederSideChooser.get());
         
         ledState = true;
-        RobotContainer.led.setLEDState(true);
+        // RobotContainer.led.setLEDState(true);
         SmartDashboard.putBoolean("LED on", true);
 
-        RobotContainer.led.blinkWithRSL(Color.kOrangeRed);
+        // RobotContainer.led.blinkWithRSL(Color.kOrangeRed);
     }
     
     
@@ -254,7 +254,7 @@ public class Robot extends LoggedRobot
     @SuppressWarnings("RedundantMethodOverride")
     @Override
     public void autonomousExit() {
-        RobotContainer.led.putDefaultPattern();
+        // RobotContainer.led.putDefaultPattern();
     }
     
     
@@ -264,15 +264,15 @@ public class Robot extends LoggedRobot
         Elastic.selectTab(1);
         Logger.recordOutput("Elastic Tab", "Telop");
 
-        RobotContainer.led.setFeederLED(RobotContainer.robotAuto.getFeederSide());
+        // RobotContainer.led.setFeederLED(RobotContainer.robotAuto.getFeederSide());
 
-        if (autonomousCommand != null)
-        {
-            autonomousCommand.cancel();
-        }
-        if(RobotContainer.elevator.getDesiredLevel() != null){
-            RobotContainer.elevator.moveMotorByPosition(RobotContainer.elevator.getDesiredLevel());
-        }
+        // if (autonomousCommand != null)
+        // {
+        //     autonomousCommand.cancel();
+        // }
+        // if(RobotContainer.elevator.getDesiredLevel() != null){
+        //     RobotContainer.elevator.moveMotorByPosition(RobotContainer.elevator.getDesiredLevel());
+        // }
     }
     
     
@@ -282,8 +282,8 @@ public class Robot extends LoggedRobot
     @SuppressWarnings("RedundantMethodOverride")
     @Override
     public void teleopExit() {
-        RobotContainer.led.setDefaultPattern(isRedAlliance);
-        RobotContainer.led.putDefaultPattern();
+        // RobotContainer.led.setDefaultPattern(isRedAlliance);
+        // RobotContainer.led.putDefaultPattern();
     }
     
     

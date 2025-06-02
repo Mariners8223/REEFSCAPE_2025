@@ -36,6 +36,7 @@ import frc.robot.commands.EndEffector.EjectSequance;
 import frc.robot.commands.EndEffector.MiniEject;
 import frc.robot.commands.EndEffector.Funnel.ToggleFunnel;
 import frc.robot.commands.EndEffector.Intake.Intake;
+import frc.robot.commands.EndEffector.Intake.IntakeStep2;
 import frc.robot.commands.MasterCommand.*;
 import frc.robot.subsystems.BallDropping.BallDropping;
 import frc.robot.subsystems.Climb.Climb;
@@ -68,6 +69,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.DriveTrain.DriveBase;
 
+import static frc.robot.Blackbox.*;
+
 
 public class RobotContainer {
     // public static DriveBase driveBase;
@@ -77,7 +80,7 @@ public class RobotContainer {
     public static RobotAuto robotAuto;
     public static Vision vision;
     public static Climb climb;
-    public static LED led;
+    // public static LED led;
 
     public static LoggedDashboardChooser<Command> autoChooser;
 
@@ -96,11 +99,11 @@ public class RobotContainer {
         endEffector = new EndEffector();
         ballDropping = new BallDropping();
         climb = new Climb();
-        led = new LED();
+        // led = new LED();
         // robotAuto = new RobotAuto();
         // vision = new Vision(driveBase::addVisionMeasurement, driveBase::getPose, HomeToReef::isRunning);
 
-        endEffector.setDefaultCommand(new Intake(endEffector));
+        // endEffector.setDefaultCommand(new Intake(endEffector));
 
         if(Constants.ROBOT_TYPE == Constants.RobotType.COMPETITION){
             new Trigger(DriverStation::isDSAttached).onTrue(
@@ -111,33 +114,45 @@ public class RobotContainer {
             );
         }
 
-        configNamedCommands();
-        configChooser();
-        configFeederChooser();
-        configLEDs();
+        // beamBreakTrigger.onTrue(
+        //     new SequentialCommandGroup(
+        //         endEffectorMotorLeftDutyCycle(50),
+        //         endEffectorMotorRightDutyCycle(50),
+        //         new WaitCommand(0.25),
+        //         endEffectorMotorLeftStop(),
+        //         endEffectorMotorRightStop()
+        //     )
+        // );
+
+
+
+        // configNamedCommands();
+        // configChooser();
+        // configFeederChooser();
+        // configLEDs();
         
         // configureDriveBindings();
         // configureOperatorBinding();
 
         //#region Configuration
         //  configureCamera();
-        if (RobotBase.isReal()) {
-            CameraServer.startAutomaticCapture();
-            CameraServer.getServer().getSource().setResolution(160, 90);
-            CameraServer.getServer().getSource().setFPS(15);
-        } else {
-            //until we have real driver station
-            SmartDashboard.putNumber("target Reef", 1);
-            SmartDashboard.putNumber("target Level", 2);
-            SmartDashboard.putBoolean("should drop ball", false);
+        // if (RobotBase.isReal()) {
+        //     CameraServer.startAutomaticCapture();
+        //     CameraServer.getServer().getSource().setResolution(160, 90);
+        //     CameraServer.getServer().getSource().setFPS(15);
+        // } else {
+        //     //until we have real driver station
+        //     SmartDashboard.putNumber("target Reef", 1);
+        //     SmartDashboard.putNumber("target Level", 2);
+        //     SmartDashboard.putBoolean("should drop ball", false);
 
 
-            driveController.y().onTrue(new InstantCommand(() -> {
-                RobotContainer.robotAuto.setSelectedReef(RobotContainer.configureTargetReefSupplier());
-                RobotContainer.robotAuto.setSelectedLevel(RobotContainer.configureLevelSupplier());
-                System.out.println("set new targets");
-            }));
-        }
+        //     driveController.y().onTrue(new InstantCommand(() -> {
+        //         RobotContainer.robotAuto.setSelectedReef(RobotContainer.configureTargetReefSupplier());
+        //         RobotContainer.robotAuto.setSelectedLevel(RobotContainer.configureLevelSupplier());
+        //         System.out.println("set new targets");
+        //     }));
+        // }
 
         if(Constants.ROBOT_TYPE == RobotType.DEVELOPMENT) HomeToReef.pidTune();
 
@@ -148,9 +163,9 @@ public class RobotContainer {
             Elastic.selectTab(2);
         }));
 
-        Trigger robotInClimb = new Trigger(() -> Timer.getMatchTime() < 30 && endEffector.isFunnelInClimb()).and(RobotContainer::isRobotInClimbArea);
+        // Trigger robotInClimb = new Trigger(() -> Timer.getMatchTime() < 30 && endEffector.isFunnelInClimb()).and(RobotContainer::isRobotInClimbArea);
 
-        robotInClimb.onFalse(new InstantCommand(DriveCommand::halfSpeed));
+        // robotInClimb.onFalse(new InstantCommand(DriveCommand::halfSpeed));
 
         new Trigger(() -> !endEffector.isFunnelInClimb()).onTrue(new InstantCommand(() -> {
             DriveCommand.normalSpeed();
@@ -158,10 +173,9 @@ public class RobotContainer {
             Elastic.selectTab(1);
         }));
 
-        new Trigger(() -> ConduitApi.getInstance().getPDPVoltage() > 7)
-                .whileTrue(new WaitCommand(10).andThen(new InstantCommand(() -> led.setLEDState(true))).ignoringDisable(true))
-                .onFalse(new InstantCommand(() -> led.setLEDState(false)).ignoringDisable(true));
-        //#endregion
+        // new Trigger(() -> ConduitApi.getInstance().getPDPVoltage() > 7)
+        //         .whileTrue(new WaitCommand(10).andThen(new InstantCommand(() -> led.setLEDState(true))).ignoringDisable(true))
+        //         .onFalse(new InstantCommand(() -> led.setLEDState(false)).ignoringDisable(true));
     }
 
     public static void configFeederChooser(){
@@ -235,149 +249,144 @@ public class RobotContainer {
         return ElevatorLevel.values()[level];
     }
 
-    private static boolean isRobotInClimbArea(){
-        Pose2d robotPose = driveBase.getPose();
+    //#region configureDriveThings
+    // public static void configureDriveBindings() {
+    //     BooleanSupplier isCycleReady = () ->
+    //             robotAuto.getSelectedReef() != null && robotAuto.getSelectedLevel() != null && endEffector.isGpLoaded();
 
-        return  robotPose.getX() > 7.5 && robotPose.getX() < 8.5;
-    }
+    //     EventTrigger moveElevatorMarker = new EventTrigger("move to selected level");
 
-    public static void configureDriveBindings() {
-        BooleanSupplier isCycleReady = () ->
-                robotAuto.getSelectedReef() != null && robotAuto.getSelectedLevel() != null && endEffector.isGpLoaded();
+    //     Command masterCommand = new MasterCommand(
+    //             driveBase, elevator, endEffector, moveElevatorMarker, robotAuto::getSelectedLevel, robotAuto::getSelectedReef, led);
 
-        EventTrigger moveElevatorMarker = new EventTrigger("move to selected level");
+    //     // Command semiAutoCommand = new SemiAuto(driveBase, elevator, robotAuto::getSelectedReef,
+    //     //         robotAuto::getSelectedLevel, moveElevatorMarker, driveController, led);
 
-        Command masterCommand = new MasterCommand(
-                driveBase, elevator, endEffector, moveElevatorMarker, robotAuto::getSelectedLevel, robotAuto::getSelectedReef, led);
+    //     new Trigger(RobotState::isTeleop).and(RobotState::isEnabled).whileTrue(new StartEndCommand(() ->
+    //             driveBase.setDefaultCommand(new DriveCommand(driveBase, RobotContainer.driveController)),
+    //             driveBase::removeDefaultCommand).ignoringDisable(true));
 
-        // Command semiAutoCommand = new SemiAuto(driveBase, elevator, robotAuto::getSelectedReef,
-        //         robotAuto::getSelectedLevel, moveElevatorMarker, driveController, led);
+    //     BooleanSupplier robotBelowCertainSpeed = () -> {
+    //         // speed is below 1 m/s total
+    //         return driveBase.getVelocity() < 1;
+    //     };
 
-        new Trigger(RobotState::isTeleop).and(RobotState::isEnabled).whileTrue(new StartEndCommand(() ->
-                driveBase.setDefaultCommand(new DriveCommand(driveBase, RobotContainer.driveController)),
-                driveBase::removeDefaultCommand).ignoringDisable(true));
+    //     Trigger mainCycleTrigger = driveController.leftTrigger();
 
-        BooleanSupplier robotBelowCertainSpeed = () -> {
-            // speed is below 1 m/s total
-            return driveBase.getVelocity() < 1;
-        };
+    //     Trigger moveElevator = driveController.x();
+    //     Trigger onlyRobotToReef = driveController.b();
 
-        Trigger mainCycleTrigger = driveController.leftTrigger();
+    //     Trigger semiAuto = driveController.a();
 
-        Trigger moveElevator = driveController.x();
-        Trigger onlyRobotToReef = driveController.b();
+    //     Trigger undoGP = driveController.y();
 
-        Trigger semiAuto = driveController.a();
+    //     Trigger leftFeeder = driveController.leftBumper();
+    //     Trigger rightFeeder = driveController.rightBumper();
 
-        Trigger undoGP = driveController.y();
+    //     // main cycle
+    //     mainCycleTrigger.whileTrue(masterCommand.onlyIf(isCycleReady).withName("Master Command"));
+    //     mainCycleTrigger.onFalse(new MoveToLevel(elevator, ElevatorLevel.Bottom));
 
-        Trigger leftFeeder = driveController.leftBumper();
-        Trigger rightFeeder = driveController.rightBumper();
+    //     onlyRobotToReef.and(() -> robotAuto.getSelectedReef() != null)
+    //             .whileTrue(new RobotToReef(driveBase, robotAuto::getSelectedReef, led));
 
-        // main cycle
-        mainCycleTrigger.whileTrue(masterCommand.onlyIf(isCycleReady).withName("Master Command"));
-        mainCycleTrigger.onFalse(new MoveToLevel(elevator, ElevatorLevel.Bottom));
+    //     // moveElevator.whileTrue(
+    //     //                 new MoveToLevelActive(elevator, robotAuto::getSelectedLevel)
+    //     //         .onlyIf(() -> robotAuto.getSelectedLevel() != null && endEffector.isGpLoaded() && robotBelowCertainSpeed.getAsBoolean())
+    //     // );
+    //     moveElevator.whileTrue(new MoveToLevel(elevator, ElevatorLevel.L3));
+    //     moveElevator.onFalse(new MoveToLevel(elevator, ElevatorLevel.L1));
 
-        onlyRobotToReef.and(() -> robotAuto.getSelectedReef() != null)
-                .whileTrue(new RobotToReef(driveBase, robotAuto::getSelectedReef, led));
+    //     // semiAuto.and(isCycleReady).whileTrue(semiAutoCommand);
+    //     // semiAuto.onFalse(new MoveToLevel(elevator, ElevatorLevel.Bottom));
 
-        // moveElevator.whileTrue(
-        //                 new MoveToLevelActive(elevator, robotAuto::getSelectedLevel)
-        //         .onlyIf(() -> robotAuto.getSelectedLevel() != null && endEffector.isGpLoaded() && robotBelowCertainSpeed.getAsBoolean())
-        // );
-        moveElevator.whileTrue(new MoveToLevel(elevator, ElevatorLevel.L3));
-        moveElevator.onFalse(new MoveToLevel(elevator, ElevatorLevel.L1));
+    //     semiAuto.onTrue(new InstantCommand(() -> {
+    //         robotAuto.toggleFeederSide();
+    //         led.setFeederLED(robotAuto.getFeederSide());
+    //     }));
 
-        // semiAuto.and(isCycleReady).whileTrue(semiAutoCommand);
-        // semiAuto.onFalse(new MoveToLevel(elevator, ElevatorLevel.Bottom));
+    //     driveController.start().onTrue(driveBase.resetOnlyDirection());
 
-        semiAuto.onTrue(new InstantCommand(() -> {
-            robotAuto.toggleFeederSide();
-            led.setFeederLED(robotAuto.getFeederSide());
-        }));
+    //     undoGP.onTrue(new InstantCommand(() -> endEffector.setLoadedValue(false)));
 
-        driveController.start().onTrue(driveBase.resetOnlyDirection());
+    //     rightFeeder.whileTrue(new FeederWrapper(driveBase, robotAuto, led, FeederLocation.RIGHT));
+    //     leftFeeder.whileTrue(new FeederWrapper(driveBase, robotAuto, led, FeederLocation.LEFT));
 
-        undoGP.onTrue(new InstantCommand(() -> endEffector.setLoadedValue(false)));
+    //     new Trigger(isCycleReady).onTrue(new SequentialCommandGroup(
+    //             new InstantCommand(() -> driveController.setRumble(GenericHID.RumbleType.kBothRumble, 0.25)),
+    //             new WaitCommand(0.5),
+    //             new InstantCommand(() -> driveController.setRumble(GenericHID.RumbleType.kBothRumble, 0))
+    //     ).ignoringDisable(true));
 
-        rightFeeder.whileTrue(new FeederWrapper(driveBase, robotAuto, led, FeederLocation.RIGHT));
-        leftFeeder.whileTrue(new FeederWrapper(driveBase, robotAuto, led, FeederLocation.LEFT));
+    //     driveController.povRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.RIGHT));
+    //     driveController.povLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.LEFT));
+    //     driveController.povUp().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FORWARD));
+    //     driveController.povDown().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACKWARDS));
+    //     driveController.povUpLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_LEFT));
+    //     driveController.povUpRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_RIGHT));
+    //     driveController.povDownLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_LEFT));
+    //     driveController.povDownRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_RIGHT));
+    // }
 
-        new Trigger(isCycleReady).onTrue(new SequentialCommandGroup(
-                new InstantCommand(() -> driveController.setRumble(GenericHID.RumbleType.kBothRumble, 0.25)),
-                new WaitCommand(0.5),
-                new InstantCommand(() -> driveController.setRumble(GenericHID.RumbleType.kBothRumble, 0))
-        ).ignoringDisable(true));
+    // public static void configNamedCommands() {
+    //     NamedCommands.registerCommand("move l1", new MoveToLevel(elevator, ElevatorLevel.L1));
 
-        driveController.povRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.RIGHT));
-        driveController.povLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.LEFT));
-        driveController.povUp().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FORWARD));
-        driveController.povDown().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACKWARDS));
-        driveController.povUpLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_LEFT));
-        driveController.povUpRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_RIGHT));
-        driveController.povDownLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_LEFT));
-        driveController.povDownRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_RIGHT));
-    }
+    //     NamedCommands.registerCommand("move l2", new MoveToLevel(elevator, ElevatorLevel.L2));
 
-    public static void configNamedCommands() {
-        NamedCommands.registerCommand("move l1", new MoveToLevel(elevator, ElevatorLevel.L1));
+    //     NamedCommands.registerCommand("move l3", new MoveToLevel(elevator, ElevatorLevel.L3));
 
-        NamedCommands.registerCommand("move l2", new MoveToLevel(elevator, ElevatorLevel.L2));
+    //     NamedCommands.registerCommand("move l4", new MoveToLevel(elevator, ElevatorLevel.L4));
 
-        NamedCommands.registerCommand("move l3", new MoveToLevel(elevator, ElevatorLevel.L3));
+    //     EjectSequance eject = new EjectSequance(endEffector, elevator);
 
-        NamedCommands.registerCommand("move l4", new MoveToLevel(elevator, ElevatorLevel.L4));
+    //     NamedCommands.registerCommand("eject", eject.beforeStarting(() ->
+    //             eject.setLevel(MotorPower.L4)));
 
-        EjectSequance eject = new EjectSequance(endEffector, elevator);
+    //     NamedCommands.registerCommand("ball drop l2", new BallDropLow(ballDropping));
+    //     NamedCommands.registerCommand("ball drop l3", new BallDropHigh(ballDropping));
+    //     NamedCommands.registerCommand("ball drop off", new BallDropOff(ballDropping));
+    //     NamedCommands.registerCommand("reset elevator", new MoveToLevel(elevator, ElevatorLevel.Bottom));
 
-        NamedCommands.registerCommand("eject", eject.beforeStarting(() ->
-                eject.setLevel(MotorPower.L4)));
+    //     for (ReefLocation reef : ReefLocation.values()) {
+    //         HomeToReef homeToReef = new HomeToReef(driveBase, reef);
 
-        NamedCommands.registerCommand("ball drop l2", new BallDropLow(ballDropping));
-        NamedCommands.registerCommand("ball drop l3", new BallDropHigh(ballDropping));
-        NamedCommands.registerCommand("ball drop off", new BallDropOff(ballDropping));
-        NamedCommands.registerCommand("reset elevator", new MoveToLevel(elevator, ElevatorLevel.Bottom));
+    //         // .onlyIf(homeToReef::isOutOfTolarance))
 
-        for (ReefLocation reef : ReefLocation.values()) {
-            HomeToReef homeToReef = new HomeToReef(driveBase, reef);
+    //         NamedCommands.registerCommand("home to reef " + (reef.ordinal() + 1), homeToReef);
 
-            // .onlyIf(homeToReef::isOutOfTolarance))
+    //         NamedCommands.registerCommand("set target reef " + (reef.ordinal() + 1), 
+    //             new InstantCommand(() -> robotAuto.setSelectedReef(reef)));
+    //     }
 
-            NamedCommands.registerCommand("home to reef " + (reef.ordinal() + 1), homeToReef);
+    //     NamedCommands.registerCommand("Wait until GP", new Intake(endEffector));
 
-            NamedCommands.registerCommand("set target reef " + (reef.ordinal() + 1), 
-                new InstantCommand(() -> robotAuto.setSelectedReef(reef)));
-        }
+    //     EventTrigger moveElevatorMarker = new EventTrigger("move to selected level");
 
-        NamedCommands.registerCommand("Wait until GP", new Intake(endEffector));
+    //     NamedCommands.registerCommand("wait to move elevator", new WaitUntilCommand(moveElevatorMarker));
+    // }
 
-        EventTrigger moveElevatorMarker = new EventTrigger("move to selected level");
+    // private static void configLEDs(){
+    //     led.setStripControl(StripControl.ALL);
+    //     led.setDefaultPattern(Robot.isRedAlliance);
+    //     led.putDefaultPattern();
 
-        NamedCommands.registerCommand("wait to move elevator", new WaitUntilCommand(moveElevatorMarker));
-    }
+    //     Command gpLoadedCommand = new SequentialCommandGroup(
+    //             led.setStripControlCommand(StripControl.ALL),
+    //             led.SetSolidColourCommand(Color.kGreen),
+    //             led.BlinkCommand(0.3),
+    //             new WaitCommand(1.2),
+    //             new InstantCommand(() -> {
+    //                 if(RobotState.isAutonomous()) led.blinkWithRSLCommand(Color.kOrangeRed);
+    //                 else led.putDefaultPattern();
+    //             }));
 
-    private static void configLEDs(){
-        led.setStripControl(StripControl.ALL);
-        led.setDefaultPattern(Robot.isRedAlliance);
-        led.putDefaultPattern();
+    //     gpLoadedCommand.addRequirements(led);
 
-        Command gpLoadedCommand = new SequentialCommandGroup(
-                led.setStripControlCommand(StripControl.ALL),
-                led.SetSolidColourCommand(Color.kGreen),
-                led.BlinkCommand(0.3),
-                new WaitCommand(1.2),
-                new InstantCommand(() -> {
-                    if(RobotState.isAutonomous()) led.blinkWithRSLCommand(Color.kOrangeRed);
-                    else led.putDefaultPattern();
-                }));
+    //     Trigger gpLoadedTrigger = new Trigger(endEffector::isGpLoaded);
 
-        gpLoadedCommand.addRequirements(led);
-
-        Trigger gpLoadedTrigger = new Trigger(endEffector::isGpLoaded);
-
-        gpLoadedTrigger.onTrue(gpLoadedCommand);
-    }
-
+    //     gpLoadedTrigger.onTrue(gpLoadedCommand);
+    // }
+    //#endregion
 
 
     public static Command getAutoCommand() {
