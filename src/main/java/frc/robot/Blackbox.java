@@ -9,12 +9,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.BallDropping.BallDropping;
 import frc.robot.subsystems.EndEffector.EndEffector;
 import frc.robot.subsystems.EndEffector.EndEffectorConstants;
+import frc.robot.subsystems.EndEffector.EndEffectorIOReal;
 
 public class Blackbox {
-    private static EndEffector endEffector = new EndEffector();
-    private static BallDropping dropper = new BallDropping();
+    private static EndEffector endEffector = RobotContainer.endEffector;
+    private static BallDropping dropper = RobotContainer.ballDropping;
     private static CommandPS5Controller controller = new CommandPS5Controller(0);
-    private static DigitalInput beamBreak = new DigitalInput(EndEffectorConstants.BEAM_BREAK_PORT);
+    private static DigitalInput beamBreak = ((EndEffectorIOReal)endEffector.io).beamBreak;
 
     /**
      * Sets the duty cycle (percent of full power) of the right endeffector motor
@@ -67,21 +68,21 @@ public class Blackbox {
     }
 
     /**
-     * @return BooleanTrigger of controller's circle button
+     * BooleanTrigger of controller's circle button
      */
-    public static Trigger controllerCircle(){ return controller.circle(); }
+    public static Trigger controllerCircle = controller.circle();
     /**
-     * @return BooleanTrigger of controller's square button
+     * BooleanTrigger of controller's square button
      */
-    public static Trigger controllerSquare(){ return controller.square(); }
+    public static Trigger controllerSquare = controller.square();
     /**
-     * @return BooleanTrigger of controller's cross button
+     * BooleanTrigger of controller's cross button
      */
-    public static Trigger controllerCross(){ return controller.cross(); }
+    public static Trigger controllerCross = controller.cross();
     /**
-     * @return BooleanTrigger of controller's triangle button
+     * BooleanTrigger of controller's triangle button
      */
-    public static Trigger controllerTriangle(){ return controller.triangle(); }
+    public static Trigger controllerTriangle = controller.triangle();
 
     // public static Supplier<Double> controllerLeftXAxis() { return controller::getLeftX; }
     // public static Supplier<Double> controllerLeftYAxis() { return controller::getLeftY; }
@@ -89,7 +90,7 @@ public class Blackbox {
     // public static Supplier<Double> controllerRightYAxis() { return controller::getRightY; }
 
     /**
-     * @return BooleanTrigger of the beambreak's state
+     * BooleanTrigger of the beambreaker's state
      */
-    public static Trigger beamBreakTrigger() { return new Trigger(() -> beamBreak.get()); }
+    public static Trigger beamBreakTrigger = new Trigger(() -> beamBreak.get());
 }
