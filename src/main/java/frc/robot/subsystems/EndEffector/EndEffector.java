@@ -30,14 +30,26 @@ public class EndEffector extends SubsystemBase {
         setLoadedValue(Constants.ROBOT_TYPE == Constants.RobotType.COMPETITION);
     }
 
+    /**
+     * Set duty cycle of right endeffector motor
+     * @param PowerToSet Duty cycle to set right endeffector motor
+     */
     public void setRightMotorPower(double PowerToSet) {
         io.setRightMotorPower(PowerToSet);
     }
 
+    /**
+     * Set duty cycle of left endeffector motor
+     * @param PowerToSet Duty cycle to set left endeffector motor
+     */
     public void setLeftMotorPower(double PowerToSet) {
         io.setLeftMotorPower(PowerToSet);
     }
 
+    /**
+     * Returns boolean representing if funnel is in position for climbing
+     * @return boolean representing if funnel is in position for climbing
+     */
     public boolean isFunnelInClimb(){
         return getFunnelPosition() < EndEffectorConstants.FunnelMotor.CLIMB_POSITION / 2;
     }
