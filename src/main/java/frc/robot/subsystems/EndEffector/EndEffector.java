@@ -97,11 +97,6 @@ public class EndEffector extends SubsystemBase {
 
     @Override
     public void periodic() {
-        inputs.pose = new Pose3d(EndEffectorConstants.X_ON_ROBOT, EndEffectorConstants.Y_ON_ROBOT, EndEffectorConstants.Z_OFFSET, new Rotation3d(0, -inputs.funnelPosition, 0));
         io.Update(inputs);
-        Logger.processInputs(getName(), inputs);
-
-        String currentCommandName = getCurrentCommand() == null ? "Null" : getCurrentCommand().getName();
-        Logger.recordOutput("EndEffector/Current Command", currentCommandName);
     }
 }
