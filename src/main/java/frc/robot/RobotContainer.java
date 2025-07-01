@@ -117,21 +117,12 @@ public class RobotContainer {
             );
         }
         //#endregion
-        controllerCircle.onTrue(
-            new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                    endEffectorMotorLeftDutyCycle((1/3)),
-                     endEffectorMotorRightDutyCycle((-1/3))
-                ),
-               new WaitCommand(3),
-               new ParallelCommandGroup(
-                endEffectorMotorLeftStop(),
-                endEffectorMotorRightStop()
-               
-               )
 
-            )
-        );
+        controllerSquare.onTrue(ballDropperReachAngle(100));
+        controllerSquare.onFalse(ballDropperReachAngle(40));
+
+        controllerTriangle.onTrue(ballDropperDutyCycle(30));
+        controllerTriangle.onFalse(ballDropperDutyCycle(0));
 
         //#region Logs
         if(Constants.ROBOT_TYPE == RobotType.DEVELOPMENT) HomeToReef.pidTune();
