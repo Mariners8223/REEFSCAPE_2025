@@ -4,17 +4,15 @@
 
 package frc.robot.subsystems.Climb;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import frc.util.MarinersController.MarinersTalonFX;
+import frc.util.MarinersController.MarinersController.ControllerLocation;
 
 /** Add your docs here. */
-public interface ClimbIO {
-    class ClimbInputs{
-        double ClimbHeight;
+public class ClimbIOReal implements ClimbIO{
+
+    public ClimbIOReal(){
     }
-
-
-
 
 }
