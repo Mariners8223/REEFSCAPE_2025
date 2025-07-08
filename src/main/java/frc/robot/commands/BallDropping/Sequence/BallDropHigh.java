@@ -12,10 +12,7 @@ import frc.robot.subsystems.BallDropping.BallDroppingConstants;
 public class BallDropHigh extends SequentialCommandGroup {
     public BallDropHigh(BallDropping ballDropping) {
        addCommands(
-               new ParallelDeadlineGroup(
-                new WaitCommand(BallDroppingConstants.HIGH_BALL_DROP_TIME),
-                new BallDropOnForHigh(ballDropping)),
-               new BallDropOff(ballDropping)
+        
        );
     }
 }

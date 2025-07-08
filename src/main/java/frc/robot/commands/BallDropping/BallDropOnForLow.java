@@ -12,22 +12,19 @@ import frc.robot.subsystems.BallDropping.BallDroppingConstants.DropperMotor;
 
 public class BallDropOnForLow extends Command {
   private final BallDropping ballDrop;
-  
-  public BallDropOnForLow(BallDropping ballDrop) {
-    this.ballDrop = ballDrop;
-    addRequirements(ballDrop);
+  public BallDropOnForLow(){
+
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    ballDrop.setDropperMotorPower(DropperMotor.POWER_TO_REACH);
-    ballDrop.reachAngle(AngleMotor.ANGLE_TO_REACH_BOTTOM);
+  public void initialize(){
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(ballDrop.getAngle() - AngleMotor.ANGLE_TO_REACH_BOTTOM) <= BallDroppingConstants.AngleMotor.ANGLE_TOLERANCE;
+
   }
 }
