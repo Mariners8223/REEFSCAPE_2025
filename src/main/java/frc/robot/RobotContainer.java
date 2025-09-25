@@ -210,8 +210,8 @@ public class RobotContainer {
                 Timer.getMatchTime() <= 30 && endEffector.isFunnelInClimb()).whileTrue(new ClimbCommand(climb));
 
         //manual intake
-        operatorController.axisLessThan(2, -0.5).and(() ->
-                !endEffector.isFunnelInClimb()).whileTrue(new MiniEject(endEffector, elevator::getCurrentLevel, robotAuto::getSelectedReef));
+    //     operatorController.axisLessThan(2, -0.5).and(() ->
+    //             !endEffector.isFunnelInClimb()).whileTrue(new MiniEject(endEffector, elevator::getCurrentLevel, robotAuto::getSelectedReef));
     }
 
     public static ReefLocation configureTargetReefSupplier() {
@@ -295,6 +295,7 @@ public class RobotContainer {
 
         driveController.start().onTrue(driveBase.resetOnlyDirection());
 
+        undoGP.whileTrue(new MiniEject(endEffector, elevator::getCurrentLevel, robotAuto::getSelectedReef));
         undoGP.onTrue(new InstantCommand(() -> endEffector.setLoadedValue(false)));
 
         rightFeeder.whileTrue(new FeederWrapper(driveBase, robotAuto, led, FeederLocation.RIGHT));
@@ -314,6 +315,9 @@ public class RobotContainer {
         driveController.povUpRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_RIGHT));
         driveController.povDownLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_LEFT));
         driveController.povDownRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_RIGHT));
+        driveController.leftStick().whileTrue(new MiniEject(endEffector, elevator::getCurrentLevel, robotAuto::getSelectedReef));
+
+      
     }
 
     public static void configNamedCommands() {
