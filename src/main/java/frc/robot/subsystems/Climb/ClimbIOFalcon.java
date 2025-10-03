@@ -27,8 +27,8 @@ public class ClimbIOFalcon implements ClimbIO{
         // motor.enableSoftLimits(ClimbConstants.SOFT_MINIMUM, ClimbConstants.SOFT_MAXIMUM);
         motor.setMotorIdleMode(false);
         motor.setMotorInverted(ClimbConstants.IS_INVERTED);
-        motor.setMaxMinOutput(0, -0.4 * 12);
-        motor.enableSoftLimits(ClimbConstants.SOFT_MINIMUM, ClimbConstants.SOFT_MAXIMUM);
+        motor.setMaxMinOutput(0, -1 * 12);//-0.4
+        motor.enableSoftLimits(ClimbConstants.SOFT_MINIMUM, ClimbConstants.START_POSITION);
 
         return motor;
     }
