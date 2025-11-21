@@ -14,8 +14,8 @@ import frc.robot.subsystems.DriveTrain.DriveBase;
 public class vision extends Command {
   private PhotonCamera camera = new PhotonCamera("EndEffectorCamera");
   DriveBase driveBase;
-  public vision() {
-
+  public vision(DriveBase driveBase) {
+    this.driveBase = driveBase;
   }
 
   @Override
@@ -25,15 +25,20 @@ public class vision extends Command {
   @Override
   public void execute() {
     var visionResult = camera.getLatestResult();
-    double tolerance=2;
+    double tolerance=10;
     if(visionResult.hasTargets()){
       PhotonTrackedTarget visionTarget = visionResult.getBestTarget();
-      if(Math.abs(visionTarget.getYaw())<=tolerance){
-        driveBase.drive(new ChassisSpeeds(0, 0, visionTarget.getYaw()));
+      if(Math.abs(visionTarget.getYaw())>=tolerance){
+        
+        driveBase.drive(new ChassisSpeeds(0, 0, -0.02*visionTarget.getYaw()));
       }
-      driveBase.drive(new ChassisSpeeds(2, 0, 0));
+      else{
+        driveBase.drive(new ChassisSpeeds(2, 0, 0));
+      }
+     
     }
-  }
+    else driveBase.drive(new ChassisSpeeds(0, 0, 1));
+}
 
   @Override
   public void end(boolean interrupted) {
@@ -44,9 +49,10 @@ public class vision extends Command {
   @Override
   public boolean isFinished() {
     var visionResult = camera.getLatestResult();
-    visionResult.hasTargets();
+    if(visionResult.hasTargets()){
     PhotonTrackedTarget visionTarget = visionResult.getBestTarget();
     if(visionTarget.getArea()>75) return true;
-    return false;
+  }
+  return false;
   }
 }

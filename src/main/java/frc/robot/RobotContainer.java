@@ -46,6 +46,7 @@ import frc.robot.subsystems.EndEffector.EndEffectorConstants.MotorPower;
 import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.LED.LED.StripControl;
 import frc.robot.subsystems.RobotAuto.RobotAuto;
+import frc.robot.commands.visionProMax.vision;
 
 import frc.robot.subsystems.Vision.Vision;
 import frc.util.Elastic;
@@ -310,12 +311,13 @@ public class RobotContainer {
         driveController.povRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.RIGHT));
         driveController.povLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.LEFT));
         driveController.povUp().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FORWARD));
-        driveController.povDown().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACKWARDS));
+       // driveController.povDown().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACKWARDS));
         driveController.povUpLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_LEFT));
         driveController.povUpRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_RIGHT));
         driveController.povDownLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_LEFT));
         driveController.povDownRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_RIGHT));
         driveController.leftStick().whileTrue(new MiniEject(endEffector, elevator::getCurrentLevel, robotAuto::getSelectedReef));
+        driveController.povDown().onTrue(new vision(driveBase));
 
       
     }
