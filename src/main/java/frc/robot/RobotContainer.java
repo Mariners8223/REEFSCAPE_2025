@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.util.FileVersionException;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -37,6 +38,7 @@ import frc.robot.commands.EndEffector.MiniEject;
 import frc.robot.commands.EndEffector.Funnel.ToggleFunnel;
 import frc.robot.commands.EndEffector.Intake.Intake;
 import frc.robot.commands.MasterCommand.*;
+import frc.robot.commands.arabic_auto.homeToReefBad;
 import frc.robot.subsystems.BallDropping.BallDropping;
 import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Elevator.Elevator;
@@ -46,6 +48,7 @@ import frc.robot.subsystems.EndEffector.EndEffectorConstants.MotorPower;
 import frc.robot.subsystems.LED.LED;
 import frc.robot.subsystems.LED.LED.StripControl;
 import frc.robot.subsystems.RobotAuto.RobotAuto;
+import frc.robot.commands.arabic_auto.homeToReefBad;
 
 import frc.robot.subsystems.Vision.Vision;
 import frc.util.Elastic;
@@ -87,7 +90,7 @@ public class RobotContainer {
     public static CommandXboxController driveController;
     public static CommandGenericHID operatorController;
 
-    public RobotContainer() {
+    public RobotContainer() throws FileVersionException, IOException, ParseException {
         driveController = new CommandXboxController(0);
         operatorController = new CommandGenericHID(1);
 
@@ -240,7 +243,7 @@ public class RobotContainer {
         return  robotPose.getX() > 7.5 && robotPose.getX() < 8.5;
     }
 
-    public static void configureDriveBindings() {
+    public static void configureDriveBindings() throws FileVersionException, IOException, ParseException {
         BooleanSupplier isCycleReady = () ->
                 robotAuto.getSelectedReef() != null && robotAuto.getSelectedLevel() != null && endEffector.isGpLoaded();
 
@@ -315,6 +318,7 @@ public class RobotContainer {
         driveController.povUpRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_RIGHT));
         driveController.povDownLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_LEFT));
         driveController.povDownRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_RIGHT));
+        driveController.povDownRight().onTrue(new homeToReefBad(driveBase));
         driveController.leftStick().whileTrue(new MiniEject(endEffector, elevator::getCurrentLevel, robotAuto::getSelectedReef));
 
       

@@ -8,6 +8,7 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.FileVersionException;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,6 +24,7 @@ import frc.util.Elastic;
 import frc.util.LocalADStarAK;
 import frc.util.MarinersController.ControllerMaster;
 
+import org.json.simple.parser.ParseException;
 import org.littletonrobotics.conduit.ConduitApi;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -36,6 +38,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter.AdvantageScopeOpenBehavior;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Robot extends LoggedRobot
@@ -49,7 +52,7 @@ public class Robot extends LoggedRobot
     private boolean ledState = true;
     
     @SuppressWarnings({ "resource", "incomplete-switch" })
-    public Robot() {
+    public Robot() throws FileVersionException, IOException, ParseException {
         Logger.recordMetadata("Robot Type", Constants.ROBOT_TYPE.name());
 
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
