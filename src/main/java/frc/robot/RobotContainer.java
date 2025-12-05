@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -57,11 +58,13 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -101,7 +104,6 @@ public class RobotContainer {
         vision = new Vision(driveBase::addVisionMeasurement, driveBase::getPose, HomeToReef::isRunning);
 
         endEffector.setDefaultCommand(new Intake(endEffector));
-
         if(Constants.ROBOT_TYPE == Constants.RobotType.COMPETITION){
             new Trigger(DriverStation::isDSAttached).onTrue(
                 new InstantCommand(() -> {
@@ -233,6 +235,42 @@ public class RobotContainer {
 
         return ElevatorLevel.values()[level];
     }
+    public static Command getAutonomousCommand() {
+        // This method loads the auto when it is called, however, it is recommended
+        // to first load your paths/autos when code starts, then return the
+        // pre-loaded auto/path
+        return new PathPlannerAuto("auto middle");
+    }
+    public static Command followPathFour() {
+    try{
+        // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("path to reef 4");
+    
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(path);
+    } catch (Exception e) {
+        DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
+    }
+}
+  public static Command findPathFour() {
+    try{
+        // Load the path you want to follow using its name in the GUI
+        PathPlannerPath path = PathPlannerPath.fromPathFile("path to reef 4");
+
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.pathfindThenFollowPath(path, null);
+    } catch (Exception e) {
+        DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
+    }
+  }
+  public static Command followPathToPlace() {
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.pathfindToPose(new Pose2d(0,0,new Rotation2d(0)), null, 0);
+  }
+
+
 
     private static boolean isRobotInClimbArea(){
         Pose2d robotPose = driveBase.getPose();
@@ -313,7 +351,10 @@ public class RobotContainer {
         driveController.povDown().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACKWARDS));
         driveController.povUpLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_LEFT));
         driveController.povUpRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.FRONT_RIGHT));
-        driveController.povDownLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_LEFT));
+        //driveController.povDownLeft().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_LEFT));
+        driveController.povDownLeft().onTrue(followPathFour());
+        //driveController.povDownLeft().onTrue(findPathFour());
+        //driveController.povDownLeft().onTrue(followPathToPlace());
         driveController.povDownRight().whileTrue(new MinorAdjust(driveBase, AdjustmentDirection.BACK_RIGHT));
         driveController.leftStick().whileTrue(new MiniEject(endEffector, elevator::getCurrentLevel, robotAuto::getSelectedReef));
 
