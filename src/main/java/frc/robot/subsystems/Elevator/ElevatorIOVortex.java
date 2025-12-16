@@ -13,7 +13,7 @@ import frc.util.MarinersController.MarinersController.ControlMode;
 /** Add your docs here. */
 public class ElevatorIOVortex implements ElevatorIO {
     private final MarinersSparkBase motorLead;
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused") 
     private final MarinersSparkBase motorFollow;
 
     public ElevatorIOVortex(){

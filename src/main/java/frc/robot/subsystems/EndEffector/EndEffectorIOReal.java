@@ -19,6 +19,7 @@ public class EndEffectorIOReal implements EndEffectorIO {
     private final DigitalInput beamBreak;
 
 
+    
     public EndEffectorIOReal() {
         RightMotor = configureEndEffectorMotor(EndEffectorConstants.RIGHT_ID, EndEffectorConstants.RIGHT_INVERTED);
         LeftMotor = configureEndEffectorMotor(EndEffectorConstants.LEFT_ID, EndEffectorConstants.LEFT_INVERTED);
